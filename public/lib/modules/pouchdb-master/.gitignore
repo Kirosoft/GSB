@@ -1,0 +1,7 @@
+/pouch*.js
+.*
+!.gitignore
+sauce_connect.log*
+node_modules
+test_suite_db
+testdb_*

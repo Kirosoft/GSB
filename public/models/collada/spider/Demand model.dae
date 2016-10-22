@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<COLLADA xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" version="1.4.1" xmlns="http://www.collada.org/2005/11/COLLADASchema">
+  <asset>
+    <contributor>
+      <author />
+      <authoring_tool>Unity3D 5.4.0b11 - COLLADA exporter v1.6.1</authoring_tool>
+      <comments />
+      <copyright />
+      <source_data>Demand_x0020_model.unity</source_data>
+    </contributor>
+    <created>2016-08-31T20:46:37.176665+01:00</created>
+    <modified>2016-08-31T20:46:37.176667+01:00</modified>
+    <unit meter="1" name="meter" />
+    <up_axis>Y_UP</up_axis>
+  </asset>
+  <library_visual_scenes>
+    <visual_scene id="collada_scene">
+      <node id="_8916" name="Main_x0020_Camera">
+        <matrix sid="matrix">
+
+1.000000 0.000000 0.000000 0.000000 
+0.000000 1.000000 0.000000 1.000000 
+0.000000 0.000000 1.000000 -10.000000 
+0.000000 0.000000 0.000000 1.000000</matrix>
+      </node>
+      <node id="_8954" name="Directional_x0020_Light">
+        <matrix sid="matrix">
+
+0.866025 0.383022 0.321394 0.000000 
+0.000000 0.642788 -0.766044 3.000000 
+-0.500000 0.663414 0.556670 0.000000 
+0.000000 0.000000 0.000000 1.000000</matrix>
+      </node>
+    </visual_scene>
+  </library_visual_scenes>
+  <scene>
+    <instance_visual_scene url="#collada_scene" />
+  </scene>
+</COLLADA>
