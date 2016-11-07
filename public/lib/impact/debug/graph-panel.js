@@ -1,13 +1,15 @@
-ig.module(
-	'impact.debug.graph-panel'
-)
-.requires(
-	'impact.debug.menu',
-	'impact.system',
-	'impact.game',
-	'impact.image'
-)
-.defines(function(){ "use strict";
+// ig.module(
+// 	'impact.debug.graph-panel'
+// )
+// .requires(
+// 	'impact.debug.menu',
+// 	'impact.system',
+// 	'impact.game',
+// 	'impact.image'
+// )
+// .defines(function(){
+
+	"use strict";
 
 
 ig.Game.inject({	
@@ -34,18 +36,18 @@ ig.Game.inject({
 
 
 
-ig.DebugGraphPanel = ig.DebugPanel.extend({
-	clocks: {},
-	marks: [],
-	textY: 0,
-	height: 128,
-	ms: 64,
-	timeBeforeRun: 0,
-	
-	
-	init: function( name, label ) {
-		this.parent( name, label );
-		
+ig.DebugGraphPanel = class DebugGraphPanel extends DebugPanel {
+
+	constructor( name, label ) {
+		super( name, label );
+		this.clocks = {};
+		this.marks = [];
+		this.textY = 0;
+		this.height = 128;
+		this.ms = 64;
+		this.timeBeforeRun = 0;
+
+
 		this.mark16ms = (this.height - (this.height/this.ms) * 16).round();
 		this.mark33ms = (this.height - (this.height/this.ms) * 33).round();
 		this.msHeight = this.height/this.ms;
@@ -70,19 +72,19 @@ ig.DebugGraphPanel = ig.DebugPanel.extend({
 		
 		ig.mark = this.mark.bind(this);
 		ig.graph = this;
-	},
+	}
 	
 	
-	addGraphMark: function( name, height ) {
+	addGraphMark( name, height ) {
 		var span = ig.$new('span');
 		span.className = 'ig_debug_graph_mark';
 		span.textContent = name;
 		span.style.top = height.round() + 'px';
 		this.container.appendChild( span );
-	},
+	}
 	
 	
-	addClock: function( name, description, color ) {		
+	addClock( name, description, color ) {
 		var mark = ig.$new('span');
 		mark.className = 'ig_debug_legend_color';
 		mark.style.backgroundColor = color;
@@ -108,35 +110,35 @@ ig.DebugGraphPanel = ig.DebugPanel.extend({
 			avg: 0,
 			html: number
 		};
-	},
+	}
 	
 	
-	beginClock: function( name, offset ) {
+	beginClock( name, offset ) {
 		this.clocks[name].start = Date.now() + (offset || 0);
-	},
+	}
 	
 	
-	endClock: function( name ) {
+	endClock( name ) {
 		var c = this.clocks[name];
 		c.current = Math.round(Date.now() - c.start);
 		c.avg = c.avg * 0.8 + c.current * 0.2;
-	},
+	}
 	
 	
-	mark: function( msg, color ) {
+	mark( msg, color ) {
 		if( this.active ) {
 			this.marks.push( {msg:msg, color:(color||'#fff')} );
 		}
-	},
+	}
 	
 	
-	beforeRun: function() {
+	beforeRun() {
 		this.endClock('lag');
 		this.timeBeforeRun = Date.now();
-	},
+	}
 	
 	
-	afterRun: function() {
+	afterRun() {
 		var frameTime = Date.now() - this.timeBeforeRun;
 		var nextFrameDue = (1000/ig.system.fps) - frameTime;
 		this.beginClock('lag', Math.max(nextFrameDue, 0));
@@ -185,7 +187,7 @@ ig.DebugGraphPanel = ig.DebugPanel.extend({
 		this.ctx.globalAlpha = 1;
 		this.marks = [];
 	}
-});
+};
 
 
 ig.debug.addPanel({
@@ -195,4 +197,3 @@ ig.debug.addPanel({
 });
 
 
-});

@@ -1,17 +1,16 @@
-ig.module(
-	'impact.map'
-)
-.defines(function(){ "use strict";
+// ig.module(
+// 	'impact.map'
+// )
+// .defines(function(){
+//
+//
+"use strict";
 
-ig.Map = ig.Class.extend({
-	tilesize: 8,
-	width: 1,
-	height: 1,
-	data: [[]],
-	name: null,
+ig.Map = class Map {
+
 	
-	
-	init: function( tilesize, data ) {
+	constructor( tilesize, data ) {
+		this.name = null;
 		this.tilesize = tilesize;
 		this.data = data;
 		this.height = data.length;
@@ -19,10 +18,10 @@ ig.Map = ig.Class.extend({
 
 		this.pxWidth = this.width * this.tilesize;
 		this.pxHeight = this.height * this.tilesize;
-	},
+	}
 	
 	
-	getTile: function( x, y ) {
+	getTile( x, y ) {
 		var tx = Math.floor( x / this.tilesize );
 		var ty = Math.floor( y / this.tilesize );
 		if( 
@@ -34,10 +33,10 @@ ig.Map = ig.Class.extend({
 		else {
 			return 0;
 		}
-	},
+	}
 	
 	
-	setTile: function( x, y, tile ) {
+	setTile( x, y, tile ) {
 		var tx = Math.floor( x / this.tilesize );
 		var ty = Math.floor( y / this.tilesize );
 		if( 
@@ -47,6 +46,4 @@ ig.Map = ig.Class.extend({
 			this.data[ty][tx] = tile;
 		}
 	}
-});
-
-});
+};

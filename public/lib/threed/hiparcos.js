@@ -1,9 +1,7 @@
 /**
  * Created by marknorman on 20/07/15.
  */
-
 var camera = null;
-starsDB = new Mongo.Collection('stars');
 
 function loadStarData( dataFile, callback ){
     var xhr = new XMLHttpRequest();

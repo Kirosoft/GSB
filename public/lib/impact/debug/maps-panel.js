@@ -1,12 +1,14 @@
-ig.module(
-	'impact.debug.maps-panel'
-)
-.requires(
-	'impact.debug.menu',
-	'impact.game',
-	'impact.background-map'
-)
-.defines(function(){ "use strict";
+// ig.module(
+// 	'impact.debug.maps-panel'
+// )
+// .requires(
+// 	'impact.debug.menu',
+// 	'impact.game',
+// 	'impact.background-map'
+// )
+// .defines(function(){
+
+	"use strict";
 
 
 ig.Game.inject({
@@ -17,18 +19,18 @@ ig.Game.inject({
 });
 
 	
-ig.DebugMapsPanel = ig.DebugPanel.extend({
-	maps: [],
-	mapScreens: [],
+ig.DebugMapsPanel = class DebugMapsPanel extends DebugPanel {
+
 	
-	
-	init: function( name, label ) {
-		this.parent( name, label );
+	constructor( name, label ) {
+		super( name, label );
+		this.maps = [];
+		this.mapScreens = [];
 		this.load();
-	},
+	}
 	
 	
-	load: function( game ) {
+	load( game ) {
 		this.options = [];
 		this.panels = [];
 		
@@ -57,10 +59,10 @@ ig.DebugMapsPanel = ig.DebugPanel.extend({
 			this.generateMiniMap( subPanel, map, m );
 			this.addPanel( subPanel );
 		}
-	},
+	}
 	
 	
-	generateMiniMap: function( panel, map, id ) {
+	generateMiniMap( panel, map, id ) {
 		var s = ig.system.scale; // we'll need this a lot
 		
 		// resize the tileset, so that one tile is 's' pixels wide and high
@@ -117,10 +119,10 @@ ig.DebugMapsPanel = ig.DebugPanel.extend({
 		mapContainer.appendChild( mapCanvas );
 		mapContainer.appendChild( mapScreen );
 		panel.container.appendChild( mapContainer );
-	},
+	}
 	
 	
-	afterRun: function() {
+	afterRun() {
 		// Update the screen position DIV for each mini-map
 		var s = ig.system.scale;
 		for( var m = 0; m < this.maps.length; m++ ) {
@@ -143,7 +145,7 @@ ig.DebugMapsPanel = ig.DebugPanel.extend({
 			screen.style.top = (y * s) + 'px';
 		}
 	}
-});
+};
 
 
 ig.debug.addPanel({
@@ -152,5 +154,3 @@ ig.debug.addPanel({
 	label: 'Background Maps'
 });
 
-
-});

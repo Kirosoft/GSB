@@ -1,11 +1,13 @@
-ig.module(
-	'impact.debug.menu'
-)
-.requires(
-	'dom.ready',
-	'impact.system'
-)
-.defines(function(){ "use strict";
+// ig.module(
+// 	'impact.debug.menu'
+// )
+// .requires(
+// 	'dom.ready',
+// 	'impact.system'
+// )
+// .defines(function(){
+//
+	"use strict";
 
 
 ig.System.inject({	
@@ -22,19 +24,20 @@ ig.System.inject({
 });
 
 
-ig.Debug = ig.Class.extend({
-	options: {},
-	panels: {},
-	numbers:{},
-	container: null,
-	panelMenu: null,
-	activePanel: null,
-	
-	debugTime: 0,
-	debugTickAvg: 0.016,
-	debugRealTime: Date.now(),
-	
-	init: function() {
+ig.Debug = class Debug {
+
+	constructor() {
+		this.options = {};
+		this.panels = {};
+		this.numbers = {};
+		this.container = null;
+		this.panelMenu = null;
+		this.activePanel=  null;
+
+		this.debugTime = 0;
+		this.debugTickAvg = 0.016;
+		this.debugRealTime = Date.now();
+
 		// Inject the Stylesheet
 		var style = ig.$new('link');
 		style.rel = 'stylesheet';
@@ -66,27 +69,26 @@ ig.Debug = ig.Class.extend({
 			ig.assert = console.assert.bind ? console.assert.bind(console) : console.assert;
 		}
 		ig.show = this.showNumber.bind(this);
-	},
+	}
 	
 	
-	addNumber: function( name, width ) {
+	addNumber( name, width ) {
 		var number = ig.$new('span');		
 		this.numberContainer.appendChild( number );
 		this.numberContainer.appendChild( document.createTextNode(name) );
 		
 		this.numbers[name] = number;
-	},
+	}
 	
 	
-	showNumber: function( name, number, width ) {
+	showNumber( name, number, width ) {
 		if( !this.numbers[name] ) {
 			this.addNumber( name, width );
 		}
 		this.numbers[name].textContent = number;
-	},
+	}
 	
-	
-	addPanel: function( panelDef ) {
+	addPanel( panelDef ) {
 		// Create the panel and options
 		var panel = new (panelDef.type)( panelDef.name, panelDef.label );
 		if( panelDef.options ) {
@@ -126,15 +128,15 @@ ig.Debug = ig.Class.extend({
 			// Not inserted? Append at the end!
 			this.panelMenu.appendChild( menuItem );
 		}
-	},
+	}
 	
 	
-	showPanel: function( name ) {
+	showPanel( name ) {
 		this.togglePanel( this.panels[name] );
-	},
+	}
 	
 	
-	togglePanel: function( panel ) {
+	togglePanel( panel ) {
 		if( panel != this.activePanel && this.activePanel ) {
 			this.activePanel.toggle( false );
 			this.activePanel.menuItem.className = 'ig_debug_menu_item';
@@ -149,17 +151,17 @@ ig.Debug = ig.Class.extend({
 		if( active ) {
 			this.activePanel = panel;
 		}
-	},
+	}
 	
 	
-	ready: function() {
+	ready() {
 		for( var p in this.panels ) {
 			this.panels[p].ready();
 		}
-	},
+	}
 	
 	
-	beforeRun: function() {
+	beforeRun() {
 		var timeBeforeRun = Date.now();
 		this.debugTickAvg = this.debugTickAvg * 0.8 + (timeBeforeRun - this.debugRealTime) * 0.2;
 		this.debugRealTime = timeBeforeRun;
@@ -167,10 +169,10 @@ ig.Debug = ig.Class.extend({
 		if( this.activePanel ) {
 			this.activePanel.beforeRun();
 		}
-	},
+	}
 	
 	
-	afterRun: function() {
+	afterRun() {
 		var frameTime = Date.now() - this.debugRealTime;
 		var nextFrameDue = (1000/ig.system.fps) - frameTime;
 		
@@ -189,68 +191,68 @@ ig.Debug = ig.Class.extend({
 		}
 		ig.Image.drawCount = 0;
 	}
-});
+};
 
 
 
-ig.DebugPanel = ig.Class.extend({
-	active: false,
-	container: null,
-	options: [],
-	panels: [],
-	label: '',
-	name: '',
+ig.DebugPanel = class DebugPanel {
+
 	
-	
-	init: function( name, label ) {
+	constructor( name, label ) {
+		this.active = false;
+		this.options = [];
+		this.panels = [];
 		this.name = name;
 		this.label = label;
 		this.container = ig.$new('div');
 		this.container.className = 'ig_debug_panel ' + this.name;
-	},
+
+		this.ready =  function(){};
+		this.beforeRun = function(){};
+		this.afterRun = function(){};
+
+	}
 	
 	
-	toggle: function( active ) {
+	toggle( active ) {
 		this.active = active;
 		this.container.style.display = active ? 'block' : 'none';
-	},
+	}
 	
 	
-	addPanel: function( panel ) {
+	addPanel( panel ) {
 		this.panels.push( panel );
 		this.container.appendChild( panel.container );
-	},
+	}
 	
 	
-	addOption: function( option ) {
+	addOption( option ) {
 		this.options.push( option );
 		this.container.appendChild( option.container );
-	},
+	}
 	
 	
-	ready: function(){},
-	beforeRun: function(){},
-	afterRun: function(){}
-});
+};
 
 
 
-ig.DebugOption = ig.Class.extend({
-	name: '',
-	labelName: '',
-	className: 'ig_debug_option',
-	label: null,
-	mark: null,
-	container: null,
-	active: false,
+ig.DebugOption = class DebugOption {
+
 	
-	colors: {
-		enabled: '#fff',
-		disabled: '#444'
-	},
-	
-	
-	init: function( name, object, property ) {
+	constructor( name, object, property ) {
+		this.labelName = '';
+		this.className = 'ig_debug_option';
+		this.label = null;
+		this.mark = null;
+		this.container = null;
+		this.active = false;
+
+		this.colors = {
+			enabled: '#fff',
+				disabled: '#444'
+		};
+
+
 		this.name = name;
 		this.object = object;
 		this.property = property;
@@ -272,15 +274,15 @@ ig.DebugOption = ig.Class.extend({
 		this.container.addEventListener( 'click', this.click.bind(this), false );
 		
 		this.setLabel();
-	},
+	}
 	
 	
-	setLabel: function() {
+	setLabel() {
 		this.mark.style.backgroundColor = this.active ? this.colors.enabled : this.colors.disabled;
-	},
+	}
 	
 	
-	click: function( ev ) {
+	click( ev ) {
 		this.active = !this.active;
 		this.object[this.property] = this.active;
 		this.setLabel();
@@ -289,11 +291,9 @@ ig.DebugOption = ig.Class.extend({
 		ev.preventDefault();
 		return false;
 	}
-});
+};
 
 
 
 // Create the debug instance!
 ig.debug = new ig.Debug();
-
-});

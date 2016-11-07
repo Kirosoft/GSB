@@ -1,28 +1,32 @@
-ig.module(
-	'impact.font'
-)
-.requires(
-	'impact.image'
-)
-.defines(function(){ "use strict";
+// ig.module(
+// 	'impact.font'
+// )
+// .requires(
+// 	'impact.image'
+// )
+// .defines(function(){ "use strict";
+//
 
+require('./image');
 
-ig.Font = ig.Image.extend({
-	widthMap: [],
-	indices: [],
-	firstChar: 32,
-	alpha: 1,
-	letterSpacing: 1,
-	lineSpacing: 0,
+ig.Font = class Font extends ig.Image {
+	constructor() {
+		this.widthMap = [];
+		this.indices = [];
+		this.firstChar = 32;
+		this.alpha = 1;
+		this.letterSpacing = 1;
+		this.lineSpacing = 0;
+
+	}
 	
-	
-	onload: function( ev ) {
+	onload( ev ) {
 		this._loadMetrics( this.data );
 		this.parent( ev );
-	},
+	}
 
 
-	widthForString: function( text ) {
+	widthForString( text ) {
 		// Multiline?
 		if( text.indexOf('\n') !== -1 ) {
 			var lines = text.split( '\n' );
@@ -35,24 +39,24 @@ ig.Font = ig.Image.extend({
 		else {
 			return this._widthForLine( text );
 		}
-	},
+	}
 
 	
-	_widthForLine: function( text ) {
+	_widthForLine( text ) {
 		var width = 0;
 		for( var i = 0; i < text.length; i++ ) {
 			width += this.widthMap[text.charCodeAt(i) - this.firstChar] + this.letterSpacing;
 		}
 		return width;
-	},
+	}
 
 
-	heightForString: function( text ) {
+	heightForString( text ) {
 		return text.split('\n').length * (this.height + this.lineSpacing);
-	},
+	}
 	
 	
-	draw: function( text, x, y, align ) {
+	draw( text, x, y, align ) {
 		if( typeof(text) != 'string' ) {
 			text = text.toString();
 		}
@@ -86,10 +90,10 @@ ig.Font = ig.Image.extend({
 			ig.system.context.globalAlpha = 1;
 		}
 		ig.Image.drawCount += text.length;
-	},
+	}
 	
 	
-	_drawChar: function( c, targetX, targetY ) {
+	_drawChar( c, targetX, targetY ) {
 		if( !this.loaded || c < 0 || c >= this.indices.length ) { return 0; }
 		
 		var scale = ig.system.scale;
@@ -109,10 +113,10 @@ ig.Font = ig.Image.extend({
 		);
 		
 		return this.widthMap[c] + this.letterSpacing;
-	},
+	}
 	
 	
-	_loadMetrics: function( image ) {
+	_loadMetrics( image ) {
 		// Draw the bottommost line of this font image into an offscreen canvas
 		// and analyze it pixel by pixel.
 		// A run of non-transparent pixels represents a character and its width
@@ -140,7 +144,7 @@ ig.Font = ig.Image.extend({
 		this.widthMap.push( currentWidth );
 		this.indices.push( x-currentWidth );
 	}
-});
+};
 
 
 ig.Font.ALIGN = {
@@ -149,4 +153,4 @@ ig.Font.ALIGN = {
 	CENTER: 2
 };
 
-});
+

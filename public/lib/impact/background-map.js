@@ -1,50 +1,53 @@
-ig.module(
-	'impact.background-map'
-)
-.requires(
-	'impact.map',
-	'impact.image'
-)
-.defines(function(){ "use strict";
+// ig.module(
+// 	'impact.background-map'
+// )
+// .requires(
+// 	'impact.map',
+// 	'impact.image'
+// )
+// .defines(function(){ "use strict";
 
-ig.BackgroundMap = ig.Map.extend({	
-	tiles: null,
-	scroll: {x: 0, y:0},
-	distance: 1,
-	repeat: false,
-	tilesetName: '',
-	foreground: false,
-	enabled: true,
-	
-	preRender: false,
-	preRenderedChunks: null,
-	chunkSize: 512,
-	debugChunks: false,
-	
-	
-	anims: {},
-	
-	
-	init: function( tilesize, data, tileset ) {
-		this.parent( tilesize, data );
+require('./map');
+require('./image');
+
+ig.BackgroundMap = class BackgroundMap extends ig.Map {
+
+	constructor( tilesize, data, tileset ) {
+		super( tilesize, data );
 		this.setTileset( tileset );
-	},
+		this.tiles = null;
+		this.scroll = {x: 0, y:0};
+		this.distance = 1;
+		this.repeat =  false;
+		this.tilesetName = '';
+		this.foreground = false;
+		this.enabled = true;
+
+		this.preRender = false;
+		this.preRenderedChunks = null;
+		this.chunkSize = 512;
+		this.debugChunks = false;
+
+
+		this.anims = {};
+
+	}
 	
 	
-	setTileset: function( tileset ) {
+	setTileset( tileset ) {
 		this.tilesetName  = tileset instanceof ig.Image ? tileset.path : tileset;
 		this.tiles = new ig.Image( this.tilesetName );
 		this.preRenderedChunks = null;
-	},
+	}
 	
 	
-	setScreenPos: function( x, y ) {
+	setScreenPos( x, y ) {
 		this.scroll.x = x / this.distance;
 		this.scroll.y = y / this.distance;
-	},
+	}
 	
 	
-	preRenderMapToChunks: function() {
+	preRenderMapToChunks() {
 		var totalWidth = this.width * this.tilesize * ig.system.scale,
 			totalHeight = this.height * this.tilesize * ig.system.scale;
 		
@@ -73,10 +76,10 @@ ig.BackgroundMap = ig.Map.extend({
 				this.preRenderedChunks[y][x] = this.preRenderChunk( x, y, chunkWidth, chunkHeight );
 			}
 		}
-	},
+	}
 	
 	
-	preRenderChunk: function( cx, cy, w, h ) {
+	preRenderChunk( cx, cy, w, h ) {
 		var tw = w / this.tilesize / ig.system.scale + 1,
 			th = h / this.tilesize / ig.system.scale + 1;
 		
@@ -114,10 +117,10 @@ ig.BackgroundMap = ig.Map.extend({
 		ig.system.context = screenContext;
 		
 		return chunk;
-	},
+	}
 	
 	
-	draw: function() {
+	draw() {
 		if( !this.tiles.loaded || !this.enabled ) {
 			return;
 		}
@@ -128,10 +131,10 @@ ig.BackgroundMap = ig.Map.extend({
 		else {
 			this.drawTiled();
 		}
-	},
+	}
 		
 	
-	drawPreRendered: function() {
+	drawPreRendered() {
 		if( !this.preRenderedChunks ) {
 			this.preRenderMapToChunks();
 		}
@@ -194,10 +197,10 @@ ig.BackgroundMap = ig.Map.extend({
 				maxChunkY++;
 			}
 		}
-	},
+	}
 	
 	
-	drawTiled: function() {	
+	drawTiled() {
 		var tile = 0,
 			anim = null,
 			tileOffsetX = (this.scroll.x / this.tilesize).toInt(),
@@ -244,6 +247,5 @@ ig.BackgroundMap = ig.Map.extend({
 			} // end for x
 		} // end for y
 	}
-});
+};
 
-});

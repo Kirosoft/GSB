@@ -1,11 +1,12 @@
-ig.module(
-	'impact.debug.entities-panel'
-)
-.requires(
-	'impact.debug.menu',
-	'impact.entity'
-)
-.defines(function(){ "use strict";
+// ig.module(
+// 	'impact.debug.entities-panel'
+// )
+// .requires(
+// 	'impact.debug.menu',
+// 	'impact.entity'
+// )
+// .defines(function(){
+	"use strict";
 
 
 ig.Entity.inject({
@@ -125,5 +126,3 @@ ig.debug.addPanel({
 	]
 });
 
-
-});

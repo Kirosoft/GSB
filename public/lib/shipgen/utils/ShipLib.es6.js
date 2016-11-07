@@ -2,35 +2,31 @@
  * Created by marknorman on 08/05/15.
  */
 
-hullsDB= new Mongo.Collection('hulls');
-partsDB= new Mongo.Collection('parts');
-var hulls = [];
-var parts = [];
+_debug = true;
 
 ShipLib = class ShipLib {
-    _debug = true;
 
     constructor() {
 
         var _self = this;
+        this.hulls = null;
+        this.parts = null;
+
+        $.getJSON('/meteor/hulls', function(data) {
+            _self.hulls = data.rows;
+        });
+
+        $.getJSON('/meteor/parts', function(data) {
+            _self.parts = data.rows;
+        });
+
+
         //this._private = new SmartVar({
         //    hulls:[],
         //    parts:[],
         //    hullCount: (parent) => {parent.registerDependency('hullCount', ['hulls']); return parent.hulls.length;},
         //    partCount: (parent) => {parent.registerDependency('partCount', ['parts']); return parent.parts.length;}
         //});
-
-        Tracker.autorun(function () {
-            console.log("hulls ready");
-            //Data subscription complete. All data is downloaded
-            hulls = hullsDB.find({}, { sort: { "id": -1 }, reactive:true }).fetch();
-        });
-
-        Tracker.autorun(function () {
-            console.log("parts ready");
-
-            parts = partsDB.find({}, {sort: {"id": 1}, reactive: true}).fetch();
-        });
 
         // Make a neat list of hulls and parts if we're debugging
         //if(this._debug){
@@ -54,11 +50,11 @@ ShipLib = class ShipLib {
     }
 
     HullCount() {
-        return hulls.length;
+        return this.hulls.length;
     };
 
     PartCount() {
-        return parts.length;
+        return this.parts.length;
     };
 
     GetPart(type, pick) {
@@ -69,7 +65,7 @@ ShipLib = class ShipLib {
             console.log("Invalid");
         }
         let scope = new THREE.Geometry();
-        let items = type == 'part' ? parts : hulls;
+        let items = type == 'part' ? this.parts : this.hulls;
         let part = items[pick];
 
         if (!part || !part.vertices) {

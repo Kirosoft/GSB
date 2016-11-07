@@ -1,14 +1,16 @@
-ig.module(
-	'impact.sound'
-)
-.defines(function(){ "use strict";
+// ig.module(
+// 	'impact.sound'
+// )
+// .defines(function(){
+"use strict";
 	
-ig.SoundManager = ig.Class.extend({
-	clips: {},
-	volume: 1,
-	format: null,
-	
-	init: function() {
+ig.SoundManager = class SoundsManager {
+
+	constructor() {
+		this.clips = {};
+		this.volume = 1;
+		this.format = null;
+
 		// Quick sanity check if the Browser supports the Audio tag
 		if( !ig.Sound.enabled || !window.Audio ) {
 			ig.Sound.enabled = false;
@@ -37,9 +39,9 @@ ig.SoundManager = ig.Class.extend({
 			document.addEventListener('touchstart', this.boundWebAudioUnlock, false);
 
 		}
-	},
+	}
 	
-	unlockWebAudio: function() {
+	unlockWebAudio() {
 		document.removeEventListener('touchstart', this.boundWebAudioUnlock, false);
 		
 		// create empty buffer
@@ -49,9 +51,9 @@ ig.SoundManager = ig.Class.extend({
 
 		source.connect(this.audioContext.destination);
 		source.start(0);
-	},
+	}
 
-	load: function( path, multiChannel, loadCallback ) {
+	load( path, multiChannel, loadCallback ) {
 		if( multiChannel && ig.Sound.useWebAudio ) {
 			// Requested as Multichannel and we're using WebAudio?
 			return this.loadWebAudio( path, multiChannel, loadCallback );
@@ -60,9 +62,9 @@ ig.SoundManager = ig.Class.extend({
 			// Oldschool HTML5 Audio - always used for Music
 			return this.loadHTML5Audio( path, multiChannel, loadCallback );
 		}
-	},
+	}
 
-	loadWebAudio: function( path, multiChannel, loadCallback ) {
+	loadWebAudio( path, multiChannel, loadCallback ) {
 		// Path to the soundfile with the right extension (.ogg or .mp3)
 		var realPath = ig.prefix + path.replace(/[^\.]+$/, this.format.ext) + ig.nocache;
 
@@ -70,7 +72,7 @@ ig.SoundManager = ig.Class.extend({
 			return this.clips[path];
 		}
 
-		var audioSource = new ig.Sound.WebAudioSource()
+		var audioSource = new ig.Sound.WebAudioSource();
 		this.clips[path] = audioSource;
 
 		var request = new XMLHttpRequest();
@@ -96,9 +98,9 @@ ig.SoundManager = ig.Class.extend({
 		request.send();
 
 		return audioSource;
-	},
+	}
 	
-	loadHTML5Audio: function( path, multiChannel, loadCallback ) {
+	loadHTML5Audio( path, multiChannel, loadCallback ) {
 		
 		// Path to the soundfile with the right extension (.ogg or .mp3)
 		var realPath = ig.prefix + path.replace(/[^\.]+$/, this.format.ext) + ig.nocache;
@@ -160,10 +162,10 @@ ig.SoundManager = ig.Class.extend({
 		}
 		
 		return clip;
-	},
+	}
 	
 	
-	get: function( path ) {
+	get( path ) {
 		// Find and return a channel that is not currently playing	
 		var channels = this.clips[path];
 
@@ -188,25 +190,25 @@ ig.SoundManager = ig.Class.extend({
 		channels[0].currentTime = 0;
 		return channels[0];
 	}
-});
+};
 
 
 
-ig.Music = ig.Class.extend({
-	tracks: [],
-	namedTracks: {},
-	currentTrack: null,
-	currentIndex: 0,
-	random: false,
+ig.Music = class Music {
+
 	
-	_volume: 1,
-	_loop: false,
-	_fadeInterval: 0,
-	_fadeTimer: null,
-	_endedCallbackBound: null,
-	
-	
-	init: function() {
+	constructor() {
+		this.tracks = [];
+		this.namedTracks = {};
+		this.currentTrack = null;
+		this.currentIndex = 0;
+		this.random = false;
+
+		this._volume = 1;
+		this._loop = false;
+		this._fadeInterval = 0;
+		this._fadeTimer = null;
+
 		this._endedCallbackBound = this._endedCallback.bind(this);
 		
 		Object.defineProperty(this,"volume", { 
@@ -218,10 +220,10 @@ ig.Music = ig.Class.extend({
 			get: this.getLooping.bind(this),
 			set: this.setLooping.bind(this)
 		});
-	},
+	}
 	
 	
-	add: function( music, name ) {
+	add( music, name ) {
 		if( !ig.Sound.enabled ) {
 			return;
 		}
@@ -254,10 +256,10 @@ ig.Music = ig.Class.extend({
 		if( !this.currentTrack ) {
 			this.currentTrack = track;
 		}
-	},
+	}
 	
 	
-	next: function() {
+	next() {
 		if( !this.tracks.length ) { return; }
 		
 		this.stop();
@@ -266,23 +268,23 @@ ig.Music = ig.Class.extend({
 			: (this.currentIndex + 1) % this.tracks.length;
 		this.currentTrack = this.tracks[this.currentIndex];
 		this.play();
-	},
+	}
 	
 	
-	pause: function() {
+	pause() {
 		if( !this.currentTrack ) { return; }
 		this.currentTrack.pause();
-	},
+	}
 	
 	
-	stop: function() {
+	stop() {
 		if( !this.currentTrack ) { return; }
 		this.currentTrack.pause();
 		this.currentTrack.currentTime = 0;
-	},
+	}
 	
 	
-	play: function( name ) {
+	play( name ) {
 		// If a name was provided, stop playing the current track (if any)
 		// and play the named track
 		if( name && this.namedTracks[name] ) {
@@ -296,45 +298,45 @@ ig.Music = ig.Class.extend({
 			return; 
 		}
 		this.currentTrack.play();
-	},
+	}
 	
 		
-	getLooping: function() {
+	getLooping() {
 		return this._loop;
-	},
+	}
 	
 	
-	setLooping: function( l ) {
+	setLooping( l ) {
 		this._loop = l;
 		for( var i in this.tracks ) {
 			this.tracks[i].loop = l;
 		}
-	},	
+	}
 		
 	
-	getVolume: function() {
+	getVolume() {
 		return this._volume;
-	},
+	}
 	
 	
-	setVolume: function( v ) {
+	setVolume( v ) {
 		this._volume = v.limit(0,1);
 		for( var i in this.tracks ) {
 			this.tracks[i].volume = this._volume;
 		}
-	},
+	}
 	
 	
-	fadeOut: function( time ) {
+	fadeOut( time ) {
 		if( !this.currentTrack ) { return; }
 		
 		clearInterval( this._fadeInterval );
 		this.fadeTimer = new ig.Timer( time );
 		this._fadeInterval = setInterval( this._fadeStep.bind(this), 50 );
-	},
+	}
 	
 	
-	_fadeStep: function() {
+	_fadeStep() {
 		var v = this.fadeTimer.delta()
 			.map(-this.fadeTimer.target, 0, 1, 0)
 			.limit( 0, 1 )
@@ -348,9 +350,9 @@ ig.Music = ig.Class.extend({
 		else {
 			this.currentTrack.volume = v;
 		}
-	},
+	}
 	
-	_endedCallback: function() {
+	_endedCallback() {
 		if( this._loop ) {
 			this.play();
 		}
@@ -358,19 +360,17 @@ ig.Music = ig.Class.extend({
 			this.next();
 		}
 	}
-});
+};
 
 
 
-ig.Sound = ig.Class.extend({
-	path: '',
-	volume: 1,
-	currentClip: null,
-	multiChannel: true,
-	_loop: false,
+ig.Sound = class Sound {
+
 	
-	
-	init: function( path, multiChannel ) {
+	constructor( path, multiChannel ) {
+		this.volume = 1;
+		this.currentClip = null;
+		this._loop = false;
 		this.path = path;
 		this.multiChannel = (multiChannel !== false);
 
@@ -382,21 +382,21 @@ ig.Sound = ig.Class.extend({
 		this.load(function() {
 			console.log("Media loaded");
 		});
-	},
+	}
 
-	getLooping: function() {
+	getLooping() {
 		return this._loop;
-	},
+	}
 
-	setLooping: function( loop ) {
+	setLooping( loop ) {
 		this._loop = loop;
 
 		if( this.currentClip ) {
 			this.currentClip.loop = loop;
 		}
-	},	
+	}
 	
-	load: function( loadCallback ) {
+	load( loadCallback ) {
 		if( !ig.Sound.enabled ) {
 			if( loadCallback ) {
 				loadCallback( this.path, true );
@@ -410,10 +410,10 @@ ig.Sound = ig.Class.extend({
 		else {
 			ig.addResource( this );
 		}
-	},
+	}
 	
 	
-	play: function() {
+	play() {
 		if( !ig.Sound.enabled ) {
 			return;
 		}
@@ -422,25 +422,24 @@ ig.Sound = ig.Class.extend({
 		this.currentClip.loop = this._loop;
 		this.currentClip.volume = ig.soundManager.volume * this.volume;
 		this.currentClip.play();
-	},
+	}
 	
 	
-	stop: function() {
+	stop() {
 		if( this.currentClip ) {
 			this.currentClip.pause();
 			this.currentClip.currentTime = 0;
 		}
 	}
-});
+};
 
 
-ig.Sound.WebAudioSource = ig.Class.extend({
-	sources: [],
-	gain: null,
-	buffer: null,
-	_loop: false,
+ig.Sound.WebAudioSource = class WebAudioSource {
 
-	init: function() {
+	constructor() {
+		this.sources = [];
+		this.buffer = null;
+		this._loop = false;
 		this.gain = ig.soundManager.audioContext.createGain();
 		this.gain.connect(ig.soundManager.audioContext.destination);
 
@@ -453,9 +452,9 @@ ig.Sound.WebAudioSource = ig.Class.extend({
 			get: this.getVolume.bind(this),
 			set: this.setVolume.bind(this)
 		});
-	},
+	}
 
-	play: function() {
+	play() {
 		if( !this.buffer ) { return; }
 		var source = ig.soundManager.audioContext.createBufferSource();
 		source.buffer = this.buffer;
@@ -469,36 +468,36 @@ ig.Sound.WebAudioSource = ig.Class.extend({
 		source.onended = function(){ that.sources.erase(source); }
 
 		source.start(0);
-	},
+	}
 
-	pause: function() {
+	pause() {
 		for( var i = 0; i < this.sources.length; i++ ) {
 			try{
 				this.sources[i].stop();
 			} catch(err){}
 		}
-	},
+	}
 
-	getLooping: function() {
+	getLooping() {
 		return this._loop;
-	},
+	}
 
-	setLooping: function( loop ) {
+	setLooping( loop ) {
 		this._loop = loop;
 
 		for( var i = 0; i < this.sources.length; i++ ) {
 			this.sources[i].loop = loop;
 		}
-	},
+	}
 
-	getVolume: function() {
+	getVolume() {
 		return this.gain.gain.value;
-	},
+	}
 
-	setVolume: function( volume ) {
+	setVolume( volume ) {
 		this.gain.gain.value = volume;
 	}
-});
+};
 
 
 ig.Sound.FORMAT = {
@@ -515,4 +514,3 @@ ig.Sound.enabled = true;
 ig.normalizeVendorAttribute(window, 'AudioContext');
 ig.Sound.useWebAudio = !!window.AudioContext && !window.nwf;
 
-});

@@ -1,27 +1,29 @@
-ig.module(
-	'impact.loader'
-)
-.requires(
-	'impact.image',
-	'impact.font',
-	'impact.sound'
-)
-.defines(function(){ "use strict";
+// ig.module(
+// 	'impact.loader'
+// )
+// .requires(
+// 	'impact.image',
+// 	'impact.font',
+// 	'impact.sound'
+// )
+// .defines(function(){ "use strict";
+//
 
-ig.Loader = ig.Class.extend({
-	resources: [],
-	
-	gameClass: null,
-	status: 0,
-	done: false,
-	
-	_unloaded: [],
-	_drawStatus: 0,
-	_intervalId: 0,
-	_loadCallbackBound: null,
-	
-	
-	init: function( gameClass, resources ) {
+require('./image');
+require('./font');
+require('./sound');
+
+ig.Loader = class Loader {
+
+	constructor( gameClass, resources ) {
+
+		this.status = 0;
+		this.done = false;
+
+		this.unloaded =  [];
+		this._drawStatus = 0;
+		this._intervalId = 0;
+
 		this.gameClass = gameClass;
 		this.resources = resources;
 		this._loadCallbackBound = this._loadCallback.bind(this);
@@ -29,10 +31,10 @@ ig.Loader = ig.Class.extend({
 		for( var i = 0; i < this.resources.length; i++ ) {
 			this._unloaded.push( this.resources[i].path );
 		}
-	},
+	}
 	
 	
-	load: function() {
+	load() {
 		ig.system.clear( '#000' );
 		
 		if( !this.resources.length ) {
@@ -44,24 +46,24 @@ ig.Loader = ig.Class.extend({
 			this.loadResource( this.resources[i] );
 		}
 		this._intervalId = setInterval( this.draw.bind(this), 16 );
-	},
+	}
 	
 	
-	loadResource: function( res ) {
+	loadResource( res ) {
 		res.load( this._loadCallbackBound );
-	},
+	}
 	
 	
-	end: function() {
+	end() {
 		if( this.done ) { return; }
 		
 		this.done = true;
 		clearInterval( this._intervalId );
 		ig.system.setGame( this.gameClass );
-	},
+	}
 	
 	
-	draw: function() {
+	draw() {
 		this._drawStatus += (this.status - this._drawStatus)/5;
 		var s = ig.system.scale;
 		var w = ig.system.width * 0.6;
@@ -80,10 +82,10 @@ ig.Loader = ig.Class.extend({
 		
 		ig.system.context.fillStyle = '#fff';
 		ig.system.context.fillRect( x*s, y*s, w*s*this._drawStatus, h*s );
-	},
+	}
 	
 	
-	_loadCallback: function( path, status ) {
+	_loadCallback( path, status ) {
 		if( status ) {
 			this._unloaded.erase( path );
 		}
@@ -96,6 +98,5 @@ ig.Loader = ig.Class.extend({
 			setTimeout( this.end.bind(this), 250 );
 		}
 	}
-});
+};
 
-});

@@ -1,22 +1,28 @@
+//
+// ig.module(
+// 	'modules.dbox2d.game'
+// )
+// .requires(
+// 	'impact.game'
+// )
+// .defines(function(){
+//
 
-ig.module(
-	'modules.dbox2d.game'
-)
-.requires(
-	'impact.game'
-)
-.defines(function(){
-	
-	
-	
-ig.Box2DGame = ig.Game.extend({
-		
-	collisionRects: [],
-	debugCollisionRects: true,
-	
-	
-	loadLevel: function( data ) {
-		
+require('../../impact/game.js');
+require('./dbox2d.js');
+
+ig.Box2DGame = class Box2DGame extends ig.Game {
+
+	constructor() {
+		super();
+		this.collisionRects = [];
+		this.debugCollisionRects = true;
+
+	}
+
+	loadLevel( data ) {
+
+
 		// Find the collision layer and create the box2d world from it
 		for( var i = 0; i < data.layer.length; i++ ) {
 			var ld = data.layer[i];
@@ -26,11 +32,11 @@ ig.Box2DGame = ig.Game.extend({
 			}
 		}
 		
-		this.parent( data );
-	},
+		super.loadLevel( data );
+	}
 	
 	
-	createWorldFromMap: function( origData, width, height, tilesize ) {	
+	createWorldFromMap( origData, width, height, tilesize ) {
 		var worldBoundingBox = new b2.AABB();
 		worldBoundingBox.lowerBound.Set( 0, 0 );
 		worldBoundingBox.upperBound.Set(
@@ -80,10 +86,10 @@ ig.Box2DGame = ig.Game.extend({
 		}
 		
 		return world;
-	},
+	}
 	
 	
-	_extractRectFromMap: function( data, width, height, x, y ) {
+	_extractRectFromMap( data, width, height, x, y ) {
 		var rect = {x: x, y: y, width: 1, height: 1};
 		
 		// Find the width of this rect
@@ -114,17 +120,14 @@ ig.Box2DGame = ig.Game.extend({
 			}
 		}
 		return rect;
-	},
-	
-	
+	}
 
-	
-	update: function() {
+	update() {
 		ig.world.Step( ig.system.tick, 5 );
-		this.parent();
-	},	
+		super.update();
+	}
 	
-	draw: function(posx) {
+	draw(posx) {
 		this.parent(posx);
 		
 		if( this.debugCollisionRects ) {
@@ -141,14 +144,11 @@ ig.Box2DGame = ig.Game.extend({
 				);
 			}
 		}
-	},
+	}
 	
-	checkEntities: function() {
+	checkEntities() {
 		//do nothing: collision detection is handled by DBox2D
 	}	
-	
-	
-});
-	
-});
+
+};
 

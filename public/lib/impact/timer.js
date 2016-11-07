@@ -1,61 +1,60 @@
-ig.module(
-	'impact.timer'
-)
-.defines(function(){ "use strict";
+// ig.module(
+// 	'impact.timer'
+// )
+// .defines(function(){
 
-ig.Timer = ig.Class.extend({
-	target: 0,
-	base: 0,
-	last: 0,
-	pausedAt: 0,
-	
-	init: function( seconds ) {
+"use strict";
+
+ig.Timer = class Timer {
+
+	constructor( seconds ) {
+		this.pausedAt = 0;
 		this.base = ig.Timer.time;
 		this.last = ig.Timer.time;
 		
 		this.target = seconds || 0;
-	},
+	}
 	
 	
-	set: function( seconds ) {
+	set( seconds ) {
 		this.target = seconds || 0;
 		this.base = ig.Timer.time;
 		this.pausedAt = 0;
-	},
+	}
 	
 	
-	reset: function() {
+	reset() {
 		this.base = ig.Timer.time;
 		this.pausedAt = 0;
-	},
+	}
 	
 	
-	tick: function() {
+	tick() {
 		var delta = ig.Timer.time - this.last;
 		this.last = ig.Timer.time;
 		return (this.pausedAt ? 0 : delta);
-	},
+	}
 	
 	
-	delta: function() {
+	delta() {
 		return (this.pausedAt || ig.Timer.time) - this.base - this.target;
-	},
+	}
 
 
-	pause: function() {
+	pause() {
 		if( !this.pausedAt ) {
 			this.pausedAt = ig.Timer.time;
 		}
-	},
+	}
 
 
-	unpause: function() {
+	unpause() {
 		if( this.pausedAt ) {
 			this.base += ig.Timer.time - this.pausedAt;
 			this.pausedAt = 0;
 		}
 	}
-});
+};
 
 ig.Timer._last = 0;
 ig.Timer.time = Number.MIN_VALUE;
@@ -68,5 +67,3 @@ ig.Timer.step = function() {
 	ig.Timer.time += Math.min(delta, ig.Timer.maxStep) * ig.Timer.timeScale;
 	ig.Timer._last = current;
 };
-
-});

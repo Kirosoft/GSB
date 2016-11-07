@@ -1,7 +1,9 @@
-ig.module(
-	'impact.input'
-)
-.defines(function(){ "use strict";
+// ig.module(
+// 	'impact.input'
+// )
+// .defines(function(){
+
+	"use strict";
 	
 ig.KEY = {
 	'MOUSE1': -1,
@@ -99,21 +101,23 @@ ig.KEY = {
 };
 
 
-ig.Input = ig.Class.extend({
-	bindings: {},
-	actions: {},
-	presses: {},
-	locks: {},
-	delayedKeyup: {},
-	
-	isUsingMouse: false,
-	isUsingKeyboard: false,
-	isUsingAccelerometer: false,
-	mouse: {x: 0, y: 0},
-	accel: {x: 0, y: 0, z: 0},
-	
-	
-	initMouse: function() {
+ig.Input = class Input {
+	constructor() {
+		this.bindings =  {};
+		this.actions = {};
+		this.presses = {};
+		this.locks = {};
+		this.delayedKeyup = {};
+
+		this.isUsingMouse = false;
+		this.isUsingKeyboard = false;
+		this.isUsingAccelerometer = false;
+		this.mouse = {x: 0, y: 0};
+		this.accel = {x: 0, y: 0, z: 0};
+	}
+
+	initMouse() {
+
 		if( this.isUsingMouse ) { return; }
 		this.isUsingMouse = true;
 		var mouseWheelBound = this.mousewheel.bind(this);
@@ -137,25 +141,25 @@ ig.Input = ig.Class.extend({
 			ig.system.canvas.addEventListener('MSPointerMove', this.mousemove.bind(this), false );
 			ig.system.canvas.style.msTouchAction = 'none';
 		}
-	},
+	}
 
 	
-	initKeyboard: function() {
+	initKeyboard() {
 		if( this.isUsingKeyboard ) { return; }
 		this.isUsingKeyboard = true;
 		window.addEventListener('keydown', this.keydown.bind(this), false );
 		window.addEventListener('keyup', this.keyup.bind(this), false );
-	},
+	}
 	
 	
-	initAccelerometer: function() {
+	initAccelerometer() {
 		if( this.isUsingAccelerometer ) { return; }
 		this.isUsingAccelerometer = true;
 		window.addEventListener('devicemotion', this.devicemotion.bind(this), false );
-	},
+	}
 
 	
-	mousewheel: function( event ) {
+	mousewheel( event ) {
 		var delta = event.wheelDelta ? event.wheelDelta : (event.detail * -1);
 		var code = delta > 0 ? ig.KEY.MWHEEL_UP : ig.KEY.MWHEEL_DOWN;
 		var action = this.bindings[code];
@@ -166,10 +170,10 @@ ig.Input = ig.Class.extend({
 			event.stopPropagation();
 			event.preventDefault();
 		}
-	},
+	}
 	
 	
-	mousemove: function( event ) {		
+	mousemove( event ) {
 		var internalWidth = parseInt(ig.system.canvas.offsetWidth) || ig.system.realWidth;
 		var scale = ig.system.scale * (internalWidth / ig.system.realWidth);
 		
@@ -181,18 +185,18 @@ ig.Input = ig.Class.extend({
 		var ev = event.touches ? event.touches[0] : event;
 		this.mouse.x = (ev.clientX - pos.left) / scale;
 		this.mouse.y = (ev.clientY - pos.top) / scale;
-	},
+	}
 	
 	
-	contextmenu: function( event ) {
+	contextmenu( event ) {
 		if( this.bindings[ig.KEY.MOUSE2] ) {
 			event.stopPropagation();
 			event.preventDefault();
 		}
-	},
+	}
 	
 	
-	keydown: function( event ) {
+	keydown( event ) {
 		var tag = event.target.tagName;
 		if( tag == 'INPUT' || tag == 'TEXTAREA' ) { return; }
 		
@@ -219,10 +223,10 @@ ig.Input = ig.Class.extend({
 			}
 			event.preventDefault();
 		}
-	},
+	}
 	
 	
-	keyup: function( event ) {
+	keyup( event ) {
 		var tag = event.target.tagName;
 		if( tag == 'INPUT' || tag == 'TEXTAREA' ) { return; }
 		
@@ -235,22 +239,22 @@ ig.Input = ig.Class.extend({
 			this.delayedKeyup[action] = true;
 			event.preventDefault();
 		}
-	},
+	}
 	
 	
-	devicemotion: function( event ) {
+	devicemotion( event ) {
 		this.accel = event.accelerationIncludingGravity;
-	},
+	}
 	
 	
-	bind: function( key, action ) {
+	bind( key, action ) {
 		if( key < 0 ) { this.initMouse(); }
 		else if( key > 0 ) { this.initKeyboard(); }
 		this.bindings[key] = action;
-	},
+	}
 	
 	
-	bindTouch: function( selector, action ) {
+	bindTouch( selector, action ) {
 		var element = ig.$( selector );
 		
 		var that = this;
@@ -258,64 +262,62 @@ ig.Input = ig.Class.extend({
 		element.addEventListener('touchend', function(ev) {that.touchEnd( ev, action );}, false);
 		element.addEventListener('MSPointerDown', function(ev) {that.touchStart( ev, action );}, false);
 		element.addEventListener('MSPointerUp', function(ev) {that.touchEnd( ev, action );}, false);
-	},
+	}
 	
 	
-	unbind: function( key ) {
+	unbind( key ) {
 		var action = this.bindings[key];
 		this.delayedKeyup[action] = true;
 		
 		this.bindings[key] = null;
-	},
+	}
 	
 	
-	unbindAll: function() {
+	unbindAll() {
 		this.bindings = {};
 		this.actions = {};
 		this.presses = {};
 		this.locks = {};
 		this.delayedKeyup = {};
-	},
+	}
 	
 	
-	state: function( action ) {
+	state( action ) {
 		return this.actions[action];
-	},
+	}
 	
 	
-	pressed: function( action ) {
+	pressed( action ) {
 		return this.presses[action];
-	},
+	}
 	
-	released: function( action ) {
+	released( action ) {
 		return !!this.delayedKeyup[action];
-	},
+	}
 		
-	clearPressed: function() {
+	clearPressed() {
 		for( var action in this.delayedKeyup ) {
 			this.actions[action] = false;
 			this.locks[action] = false;
 		}
 		this.delayedKeyup = {};
 		this.presses = {};
-	},
+	}
 	
-	touchStart: function( event, action ) {
+	touchStart( event, action ) {
 		this.actions[action] = true;
 		this.presses[action] = true;
 		
 		event.stopPropagation();
 		event.preventDefault();
 		return false;
-	},
+	}
 	
 	
-	touchEnd: function( event, action ) {
+	touchEnd( event, action ) {
 		this.delayedKeyup[action] = true;
 		event.stopPropagation();
 		event.preventDefault();
 		return false;
 	}
-});
-
-});
+};

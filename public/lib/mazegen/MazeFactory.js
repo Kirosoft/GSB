@@ -8,15 +8,17 @@ var Helpers = {
 };
 
 MazeFactory = class {
-    _partRand = null;
-    _partVar = 4;
-    map = null;
-    map_size =128;
-    rooms = [];
-    _blue = 0x03106D;
-    _white = 0xFFFFFF;
 
     constructor(name) {
+        this._partRand = null;
+        this._partVar = 4;
+        this.map = null;
+        this.map_size =128;
+        this.rooms = [];
+        this._blue = 0x03106D;
+        this._white = 0xFFFFFF;
+
+
         this._partRand = new Rc4Random(name);
         this._partLimit = 6 + Math.round(this._partRand.getRandomNumber() * this._partVar)+1;
         this.generate();
@@ -60,11 +62,11 @@ MazeFactory = class {
             var roomA = this.rooms[i];
             var roomB = this.FindClosestRoom(roomA);
 
-            pointA = {
+            var pointA = {
                 x: Helpers.GetRandom(roomA.x, roomA.x + roomA.w),
                 y: Helpers.GetRandom(roomA.y, roomA.y + roomA.h)
             };
-            pointB = {
+            var pointB = {
                 x: Helpers.GetRandom(roomB.x, roomB.x + roomB.w),
                 y: Helpers.GetRandom(roomB.y, roomB.y + roomB.h)
             };

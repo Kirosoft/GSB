@@ -1,43 +1,27 @@
-ig.module(
-	'impact.animation'
-)
-.requires(
-	'impact.timer',
-	'impact.image' 
-)
-.defines(function(){ "use strict";
+// ig.module(
+// 	'impact.animation'
+// )
+// .requires(
+// 	'impact.timer',
+// 	'impact.image'
+// )
+// .defines(function(){
+	"use strict";
 
-ig.AnimationSheet = ig.Class.extend({
-	width: 8,
-	height: 8,
-	image: null,
-	
-	init: function( path, width, height ) {
-		this.width = width;
-		this.height = height;
-		
+ig.AnimationSheet = class AnimationSheet {
+
+	constructor(path, width, height) {
+		this.width = width || 8;
+		this.height= height || 8;
 		this.image = new ig.Image( path );
 	}
-});
+};
 
 
 
-ig.Animation = ig.Class.extend({
-	sheet: null,
-	timer: null,
-	
-	sequence: [],	
-	flip: {x: false, y: false},
-	pivot: {x: 0, y: 0},
-	
-	frame: 0,
-	tile: 0,
-	loopCount: 0,
-	alpha: 1,
-	angle: 0,
-	
-	
-	init: function( sheet, frameTime, sequence, stop ) {
+ig.Animation = class Animation {
+
+	constructor( sheet, frameTime, sequence, stop ) {
 		this.sheet = sheet;
 		this.pivot = {x: sheet.width/2, y: sheet.height/2 };
 		this.timer = new ig.Timer();
@@ -46,32 +30,38 @@ ig.Animation = ig.Class.extend({
 		this.sequence = sequence;
 		this.stop = !!stop;
 		this.tile = this.sequence[0];
-	},
+		this.flip =  {x: false, y: false};
+		this.frame = 0;
+		this.tile = 0;
+		this.loopCount = 0;
+		this.alpha = 1;
+		this.angle = 0;
+	};
 	
 	
-	rewind: function() {
+	rewind() {
 		this.timer.set();
 		this.loopCount = 0;
 		this.frame = 0;
 		this.tile = this.sequence[0];
 		return this;
-	},
+	}
 	
 	
-	gotoFrame: function( f ) {
+	gotoFrame( f ) {
 		// Offset the timer by one tenth of a millisecond to make sure we
 		// jump to the correct frame and circumvent rounding errors
 		this.timer.set( this.frameTime * -f - 0.0001 );
 		this.update();
-	},
+	}
 	
 	
-	gotoRandomFrame: function() {
+	gotoRandomFrame() {
 		this.gotoFrame( Math.floor(Math.random() * this.sequence.length) )
-	},
+	}
 	
 	
-	update: function() {
+	update() {
 		var frameTotal = Math.floor(this.timer.delta() / this.frameTime);
 		this.loopCount = Math.floor(frameTotal / this.sequence.length);
 		if( this.stop && this.loopCount > 0 ) {
@@ -81,10 +71,10 @@ ig.Animation = ig.Class.extend({
 			this.frame = frameTotal % this.sequence.length;
 		}
 		this.tile = this.sequence[ this.frame ];
-	},
+	}
 	
 	
-	draw: function( targetX, targetY ) {
+	draw( targetX, targetY ) {
 		var bbsize = Math.max(this.sheet.width, this.sheet.height);
 		
 		// On screen?
@@ -125,6 +115,4 @@ ig.Animation = ig.Class.extend({
 			ig.system.context.globalAlpha = 1;
 		}
 	}
-});
-
-});
+};

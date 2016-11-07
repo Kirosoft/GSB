@@ -2,22 +2,22 @@
  * Created by marknorman on 08/05/15.
  */
 
-let shipLib = new ShipLib();
+var shipLib = new ShipLib();
+
 
 ShipFactory = class {
-    _partRand = null;
-    _partVar = 4;
-    _partLimit = 0;
-    _connectors = [];
-    _blue = 0x03106D;
-    _white = 0xFFFFFF;
-    _debug = true;
-    _cachedShip = null;
-    _axis_rotation = (Math.PI * 0.5);
 
     constructor(name) {
+        this._partVar = 4;
+        this._blue = 0x03106D;
+        this._white = 0xFFFFFF;
+        this._axis_rotation = (Math.PI * 0.5);
         this._partRand = new Rc4Random(name);
         this._partLimit = 6 + Math.round(this._partRand.getRandomNumber() * this._partVar)+1;
+        this._connectors = [];
+        this._debug = true;
+        this._cachedShip = null;
+
     }
 
     GetShip(scaleFactor) {
@@ -48,14 +48,14 @@ ShipFactory = class {
         var facemat = new THREE.MeshLambertMaterial( { color: this._white, opacity: 0.0, shading: THREE.FlatShading, map: spaceshipTexture } );
         var wiremat = new THREE.MeshLambertMaterial( { color: this._blue, opacity: 1.0, wireframe: true, wireframeLinewidth: 3.0 } );
 
-        shipMaterial = [facemat,wiremat];
-        shipMaterial[0].needsUpdate = true;
-        shipMaterial[1].needsUpdate = true;
+        this.shipMaterial = [facemat,wiremat];
+        this.shipMaterial[0].needsUpdate = true;
+        this.shipMaterial[1].needsUpdate = true;
 
         var shipGeo =shipLib.GetPart('hull', Math.round(this._partRand.getRandomNumber() * (shipLib.HullCount() - 1)));
-        shipGeo.materials = shipMaterial;
+        shipGeo.materials = this.shipMaterial;
 
-        var basePart = new THREE.Mesh( shipGeo,  new THREE.MeshFaceMaterial(shipMaterial));
+        var basePart = new THREE.Mesh( shipGeo,  new THREE.MeshFaceMaterial(this.shipMaterial));
 
         modelParent.add(basePart);
 
@@ -91,10 +91,10 @@ ShipFactory = class {
         // Make a part
         if(pPick === undefined){
 
-            part = new THREE.Mesh( shipLib.GetPart('part',Math.round(this._partRand.getRandomNumber() * (shipLib.PartCount()-1))),  new THREE.MeshFaceMaterial(shipMaterial));
+            part = new THREE.Mesh( shipLib.GetPart('part',Math.round(this._partRand.getRandomNumber() * (shipLib.PartCount()-1))),  new THREE.MeshFaceMaterial(this.shipMaterial));
             pPick = part.geometry.part.id;
         }else{
-            part = new THREE.Mesh( shipLib.GetPart('part', pPick),  new THREE.MeshFaceMaterial(shipMaterial));
+            part = new THREE.Mesh( shipLib.GetPart('part', pPick),  new THREE.MeshFaceMaterial(this.shipMaterial));
         }
         part.buffersNeedUpdate = true;
         part.geomuvsNeedUpdate = true;

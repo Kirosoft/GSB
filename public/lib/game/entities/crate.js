@@ -1,21 +1,23 @@
-ig.module(
-	'game.entities.crate'
-)
-.requires(
-	'modules.dbox2d.entity'
-)
-.defines(function(){
 
-EntityCrate = ig.Box2DEntity.extend({
-	size: {x: 8, y: 8},
-	name: 'EntityCrate',
-	type: 3,
-	checkAgainst: ig.Entity.TYPE.NONE,
-	collides: ig.Entity.COLLIDES.NEVER,
-	
-	animSheet: new ig.AnimationSheet( 'media/crate.png', 8, 8 ),
-	
-	createBody: function() {        
+require('../../impact/entity');
+require('../../impact/animation');
+require('../../modules/dbox2d/entity');
+
+EntityCrate = class EntityCrate extends ig.Box2DEntity {
+
+	constructor( x, y, settings ) {
+		super(x, y, settings);
+		this.size = {x: 8, y: 8};
+		this.name = 'EntityCrate';
+		this.type = 3;
+		this.checkAgainst = ig.Entity.TYPE.NONE;
+		this.collides = ig.Entity.COLLIDES.NEVER;
+		this.animSheet = new ig.AnimationSheet( 'media/crate.png', 8, 8 );
+		this.addAnim( 'idle', 1, [0] );
+	}
+
+
+	createBody() {
 		var def = new b2.BodyDef();
 		def.type = b2Body.b2_dynamicBody;
 		def.position.Set(
@@ -33,19 +35,12 @@ EntityCrate = ig.Box2DEntity.extend({
 		fixtureDef.shape = shape;
 		fixtureDef.density = 1;
 		this.body.CreateFixture(fixtureDef);
-	},
+	}
 
-	init: function( x, y, settings ) {
-		this.addAnim( 'idle', 1, [0] );
-		this.parent( x, y, settings );
-	},
-    inflictDamageOnEntity:function(ent) {
+    inflictDamageOnEntity(ent) {
 
-    },
-    processDamage:function(ent,damage) {
+    }
+    processDamage(ent,damage) {
     }
 
-});
-
-
-});
+};

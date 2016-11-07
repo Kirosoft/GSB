@@ -1,13 +1,13 @@
-ig.module(
-	'plugins.dbox2d.dbox2d1'
-)
-.requires(
-	'plugins.dbox2d.entity',
-	'plugins.dbox2d.game'
-)
-.defines(function(){
-/* empty module to require all db2d plugin modules */
-});
+// ig.module(
+// 	'plugins.dbox2d.dbox2d1'
+// )
+// .requires(
+// 	'plugins.dbox2d.entity',
+// 	'plugins.dbox2d.game'
+// )
+// .defines(function(){
+// /* empty module to require all db2d plugin modules */
+// });
 
 
 /*

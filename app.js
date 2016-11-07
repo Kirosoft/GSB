@@ -6,9 +6,12 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var assert = require('assert');
 
 var routes = require('./routes/index');
 var users = require('./routes/users');
+var mongo = require('./routes/mongo');
+var test = require('./routes/test');
 
 var app = express();
 
@@ -32,6 +35,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', routes);
 app.use('/users', users);
+app.use('/meteor', mongo);
+app.use('/test', test);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -64,6 +69,27 @@ app.use(function(err, req, res, next) {
   });
 });
 
+
+var MongoClient = require('mongodb').MongoClient;
+
+// Connection URL
+var url = 'mongodb://localhost:27017/meteor';
+
+// Use connect method to connect to the server
+MongoClient.connect(url, function(err, db) {
+  assert.equal(null, err);
+  console.log("Connected successfully to server");
+  db.collection("hulls", function(err, collection) {
+    collection.find({}).toArray(function(err, items) {
+      console.log(items);
+    });
+  });
+  //db.close();
+});
+
+// app.get('/meteor', function(req, res) {
+//   console.log('request: '+req);
+// });
 
 
 module.exports = app;

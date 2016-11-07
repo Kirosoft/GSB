@@ -1,18 +1,18 @@
-ig.module(
-	'impact.collision-map'
-)
-.requires(
-	'impact.map'
-)
-.defines(function(){ "use strict";
+// ig.module(
+// 	'impact.collision-map'
+// )
+// .requires(
+// 	'impact.map'
+// )
+// .defines(function(){ "use strict";
 
-ig.CollisionMap = ig.Map.extend({
+require('./map');
+
+ig.CollisionMap = class CollisionMap extends ig.Map {
 	
-	lastSlope: 1,
-	tiledef: null,
-	
-	init: function( tilesize, data, tiledef ) {
-		this.parent( tilesize, data );
+	constructor( tilesize, data, tiledef ) {
+		super( tilesize, data );
+		this.lastSlope = 1;
 		this.tiledef = tiledef || ig.CollisionMap.defaultTileDef;
 		
 		for( var t in this.tiledef ) {
@@ -20,10 +20,10 @@ ig.CollisionMap = ig.Map.extend({
 				this.lastSlope = t|0;
 			}
 		}
-	},
+	}
 	
 	
-	trace: function( x, y, vx, vy, objectWidth, objectHeight ) {
+	trace( x, y, vx, vy, objectWidth, objectHeight ) {
 		// Set up the trace-result
 		var res = {
 			collision: {x: false, y: false, slope: false},
@@ -54,10 +54,10 @@ ig.CollisionMap = ig.Map.extend({
 		}
 		
 		return res;
-	},
+	}
 	
 	
-	_traceStep: function( res, x, y, vx, vy, width, height, rvx, rvy, step ) {
+	_traceStep( res, x, y, vx, vy, width, height, rvx, rvy, step ) {
 		
 		res.pos.x += vx;
 		res.pos.y += vy;
@@ -161,10 +161,10 @@ ig.CollisionMap = ig.Map.extend({
 		}
 		
 		// res is changed in place, nothing to return
-	},
+	}
 	
 	
-	_checkTileDef: function( res, t, x, y, vx, vy, width, height, tileX, tileY ) {
+	_checkTileDef( res, t, x, y, vx, vy, width, height, tileX, tileY ) {
 		var def = this.tiledef[t];
 		if( !def ) { return false; }
 		
@@ -212,7 +212,7 @@ ig.CollisionMap = ig.Map.extend({
 		
 		return false;
 	}
-});
+};
 
 
 // Default Slope Tile definition. Each tile is defined by an array of 5 vars:
@@ -271,4 +271,3 @@ ig.CollisionMap.staticNoCollision = { trace: function( x, y, vx, vy ) {
 	};
 }};
 
-});

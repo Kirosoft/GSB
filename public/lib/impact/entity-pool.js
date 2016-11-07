@@ -1,12 +1,14 @@
-ig.module(
-	'impact.entity-pool'
-)
-.requires(
-	'impact.game'
-)
-.defines(function(){ "use strict";
+// ig.module(
+// 	'impact.entity-pool'
+// )
+// .requires(
+// 	'impact.game'
+// )
+// .defines(function(){ "use strict";
 
-ig.EntityPool = {
+require('./game');
+
+ig.EntityPool =  {
 	pools: {},
 		
 	mixin: { 
@@ -57,4 +59,3 @@ ig.Game.inject({
 	}
 });
 
-});

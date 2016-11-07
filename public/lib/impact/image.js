@@ -1,30 +1,26 @@
-ig.module(
-	'impact.image'
-)
-.defines(function(){ "use strict";
+// ig.module(
+// 	'impact.image'
+// )
+// .defines(function(){ "use strict";
 
-ig.Image = ig.Class.extend({
-	data: null,
-	width: 0,
-	height: 0,
-	loaded: false,
-	failed: false,
-	loadCallback: null,
-	path: '',
-	
-	
-	staticInstantiate: function( path ) {
-		return ig.Image.cache[path] || null;
-	},
-	
-	
-	init: function( path ) {
+ig.Image = class Image {
+
+	init( path ) {
+		this.data = null;
+		this.width = 0;
+		this.height = 0;
+		this.loaded =false;
+		this.failed = false;
+		this.loadCallback = null;
 		this.path = path;
 		this.load();
-	},
+	}
+
+	staticInstantiate( path ) {
+		return ig.Image.cache[path] || null;
+	}
 	
-	
-	load: function( loadCallback ) {
+	load( loadCallback ) {
 		if( this.loaded ) {
 			if( loadCallback ) {
 				loadCallback( this.path, true );
@@ -44,18 +40,18 @@ ig.Image = ig.Class.extend({
 		}
 		
 		ig.Image.cache[this.path] = this;
-	},
+	}
 	
 	
-	reload: function() { 
+	reload() {
 		this.loaded = false;
 		this.data = new Image();
 		this.data.onload = this.onload.bind(this);
 		this.data.src = this.path + '?' + Date.now();
-	},
+	}
 	
 	
-	onload: function( event ) {
+	onload( event ) {
 		this.width = this.data.width;
 		this.height = this.data.height;
 		this.loaded = true;
@@ -67,19 +63,19 @@ ig.Image = ig.Class.extend({
 		if( this.loadCallback ) {
 			this.loadCallback( this.path, true );
 		}
-	},
+	}
 	
 	
-	onerror: function( event ) {
+	onerror( event ) {
 		this.failed = true;
 		
 		if( this.loadCallback ) {
 			this.loadCallback( this.path, false );
 		}
-	},
+	}
 	
 	
-	resize: function( scale ) {
+	resize( scale ) {
 		// Nearest-Neighbor scaling
 		
 		// The original image is drawn into an offscreen canvas of the same size
@@ -109,10 +105,10 @@ ig.Image = ig.Class.extend({
 		}
 		scaledCtx.putImageData( scaledPixels, 0, 0 );
 		this.data = scaled;
-	},
+	}
 	
 	
-	draw: function( targetX, targetY, sourceX, sourceY, width, height ) {
+	draw( targetX, targetY, sourceX, sourceY, width, height ) {
 		if( !this.loaded ) { return; }
 		
 		var scale = ig.system.scale;
@@ -129,10 +125,10 @@ ig.Image = ig.Class.extend({
 		);
 		
 		ig.Image.drawCount++;
-	},
+	}
 	
 	
-	drawTile: function( targetX, targetY, tile, tileWidth, tileHeight, flipX, flipY ) {
+	drawTile( targetX, targetY, tile, tileWidth, tileHeight, flipX, flipY ) {
 		tileHeight = tileHeight ? tileHeight : tileWidth;
 		
 		if( !this.loaded || tileWidth > this.width || tileHeight > this.height ) { return; }
@@ -165,7 +161,7 @@ ig.Image = ig.Class.extend({
 		
 		ig.Image.drawCount++;
 	}
-});
+};
 
 ig.Image.drawCount = 0;
 ig.Image.cache = {};
@@ -175,4 +171,5 @@ ig.Image.reloadCache = function() {
 	}
 };
 
-});
+
+

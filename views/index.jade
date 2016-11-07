@@ -1,16 +1,17 @@
 extends layout
 
 block content
-  canvas#canvas(height='100%', width='100%')
+
+  canvas#canvas1(height='50px', width='50px')
 
   script(src="/socket.io/socket.io.js")
   script(src="/lib/impact/impact.js")
-  script(src="/lib/game/client.js")
+  script(src="/lib/impact/game.js")
 
   script(src="/lib/threejs/three.js")
   script(src="/lib/threejs/RequestAnimationFrame.js")
   script(src="/lib/threejs/tween.js")
-
+  //
   script(src="/lib/threed/ColladaLoader.js")
   script(src="/lib/threed/css3worldspace.js")
   script(src="/lib/threed/hiparcos.js")
@@ -24,6 +25,12 @@ block content
   script(src="/lib/threed/threex.skymap.js")
   script(src="/lib/threed/threex.texturecube.js")
   script(src="/lib/threed/threex.universeloader.js")
-
+  //
   script(src="/lib/threed/collada/Animation.js")
   script(src="/lib/threed/collada/AnimationHandler.js")
+
+  script(src="/lib/shipgen/utils/RC4Random.es6.js")
+  script(src="/lib/shipgen/utils/ShipLib.es6.js")
+  script(src="/lib/mazegen/MazeFactory.js")
+  script(src="/lib/shipgen/ShipFactory.js")
+  script(src="/lib/game/client.js")

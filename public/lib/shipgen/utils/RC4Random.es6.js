@@ -1,11 +1,12 @@
 
 
 Rc4Random = class {
-    _keySchedule = [];
-    _keySchedule_i = 0;
-    _keySchedule_j = 0;
+
 
     constructor(seed) {
+        this._keySchedule = [];
+        this._keySchedule_i = 0;
+        this._keySchedule_j = 0;
 
         for (let i = 0; i < 256; i++)
             this._keySchedule[i] = i;

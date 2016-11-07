@@ -1,53 +1,55 @@
-ig.module(
-	'impact.entity'
-)
-.requires(
-	'impact.animation',
-	'impact.impact'
-)
-.defines(function(){ "use strict";
+// ig.module(
+// 	'impact.entity'
+// )
+// .requires(
+// 	'impact.animation',
+// 	'impact.impact'
+// )
+// .defines(function(){ "use strict";
 
-ig.Entity = ig.Class.extend({
-	id: 0,
-	settings: {},
-	
-	size: {x: 16, y:16},
-	offset: {x: 0, y: 0},
-	
-	pos: {x: 0, y:0},
-	last: {x: 0, y:0},
-	vel: {x: 0, y: 0},
-	accel: {x: 0, y: 0},
-	friction: {x: 0, y: 0},
-	maxVel: {x: 100, y: 100},
-	zIndex: 0,
-	gravityFactor: 1,
-	standing: false,
-	bounciness: 0,
-	minBounceVelocity: 40,
-	
-	anims: {},
-	animSheet: null,
-	currentAnim: null,
-	health: 10,
-	
-	type: 0, // TYPE.NONE
-	checkAgainst: 0, // TYPE.NONE
-	collides: 0, // COLLIDES.NEVER
-	
-	_killed: false,
-	
-	slopeStanding: {min: (44).toRad(), max: (136).toRad() },
-	
-	init: function( x, y, settings ) {
+require('./animation');
+require('./impact');
+
+ig.Entity = class Entity {
+	constructor( x, y, settings ) {
 		this.id = ++ig.Entity._lastId;
-		this.pos.x = this.last.x = x;
-		this.pos.y = this.last.y = y;
-		
+		this.last = { x: x, y: y};
+		this.pos = { x: x, y: y};
+		this.size = {x: 16, y:16};
+		this.offset =  {x: 0, y: 0};
+		this.vel = {x: 0, y: 0};
+		this.accel =  {x: 0, y: 0};
+		this.friction =  {x: 0, y: 0};
+		this.maxVel =  {x: 100, y: 100};
+		this.zIndex =  0;
+		this.gravityFactor = 1;
+		this.standing = false;
+		this.bounciness = 0;
+		this.minBounceVelocity = 40;
+
+		this.anims =  {};
+		this.animSheet = null;
+		this.currentAnim = null;
+		this.health = 10;
+
+		this.type =  0; // TYPE.NONE
+		this.checkAgainst = 0; // TYPE.NONE
+		this.collides = 0; // COLLIDES.NEVER
+
+		this._killed = false;
+
+		this.slopeStanding = {min: (44).toRad(), max: (136).toRad() };
+
 		ig.merge( this, settings );
-	},
+
+		this.check = function( other ) {};
+		this.collideWith =  function( other, axis ) {};
+		this.ready = function() {};
+		this.erase = function() {};
+
+	}
 	
-	reset: function( x, y, settings ) {
+	reset( x, y, settings ) {
 		var proto = this.constructor.prototype;
 		this.pos.x = x;
 		this.pos.y = y;
@@ -66,9 +68,11 @@ ig.Entity = ig.Class.extend({
 		this.collides = proto.collides;
 		
 		ig.merge( this, settings );
-	},
+
+
+	}
 	
-	addAnim: function( name, frameTime, sequence, stop ) {
+	addAnim( name, frameTime, sequence, stop ) {
 		if( !this.animSheet ) {
 			throw( 'No animSheet to add the animation '+name+' to.' );
 		}
@@ -79,9 +83,9 @@ ig.Entity = ig.Class.extend({
 		}
 		
 		return a;
-	},
+	}
 	
-	update: function() {
+	update() {
 
 		if (typeof(serverSide) != "undefined") {
 			this.last.x = this.pos.x;
@@ -104,10 +108,10 @@ ig.Entity = ig.Class.extend({
 		if( this.currentAnim ) {
 			this.currentAnim.update();
 		}
-	},
+	}
 	
 	
-	getNewVelocity: function( vel, accel, friction, max ) {
+	getNewVelocity( vel, accel, friction, max ) {
 		if( accel ) {
 			return ( vel + accel * ig.system.tick ).limit( -max, max );
 		}
@@ -125,10 +129,10 @@ ig.Entity = ig.Class.extend({
 			}
 		}
 		return vel.limit( -max, max );
-	},
+	}
 	
 	
-	handleMovementTrace: function( res ) {
+	handleMovementTrace( res ) {
 		this.standing = false;
 		
 		if( res.collision.y ) {
@@ -174,63 +178,59 @@ ig.Entity = ig.Class.extend({
 		}
 		
 		this.pos = res.pos;
-	},
+	}
 	
 	
-	draw: function() {
+	draw() {
 		if( this.currentAnim ) {
 			this.currentAnim.draw(
 				this.pos.x - this.offset.x - ig.game._rscreen.x,
 				this.pos.y - this.offset.y - ig.game._rscreen.y
 			);
 		}
-	},
+	}
 	
 	
-	kill: function() {
+	kill() {
 		ig.game.removeEntity( this );
-	},
+	}
 	
 	
-	receiveDamage: function( amount, from ) {
+	receiveDamage( amount, from ) {
 		this.health -= amount;
 		if( this.health <= 0 ) {
 			this.kill();
 		}
-	},
+	}
 	
 	
-	touches: function( other ) {		
+	touches( other ) {
 		return !(
 			this.pos.x >= other.pos.x + other.size.x ||
 			this.pos.x + this.size.x <= other.pos.x ||
 			this.pos.y >= other.pos.y + other.size.y ||
 			this.pos.y + this.size.y <= other.pos.y
 		);
-	},
+	}
 	
 	
-	distanceTo: function( other ) {
+	distanceTo( other ) {
 		if (!other) return Number.MAX_VALUE;
 		var xd = (this.pos.x + this.size.x/2) - (other.pos.x + other.size.x/2); 
 		var yd = (this.pos.y + this.size.y/2) - (other.pos.y + other.size.y/2);
 		return Math.sqrt( xd*xd + yd*yd );
-	},
+	}
 	
 	
-	angleTo: function( other ) {
+	angleTo( other ) {
 		return Math.atan2(
 			(other.pos.y + other.size.y/2) - (this.pos.y + this.size.y/2),
 			(other.pos.x + other.size.x/2) - (this.pos.x + this.size.x/2)
 		);
-	},
+	}
 	
 	
-	check: function( other ) {},
-	collideWith: function( other, axis ) {},
-	ready: function() {},
-	erase: function() {}
-});
+};
 
 
 // Last used entity id; incremented with each spawned entity
@@ -436,4 +436,3 @@ ig.Entity.seperateOnYAxis = function( top, bottom, weak ) {
 	}
 };
 
-});
